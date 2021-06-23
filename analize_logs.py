@@ -1,4 +1,5 @@
 from re import match,search
+import json
 
 def separate_date_fields(date):
     day = date[:2]
@@ -13,7 +14,7 @@ def parse_line(line):
     func_name_pattern = r'[a-z]+_[a-z]+'
     date_pattern = r'\d\d/\d\d/\d\d\d\d'
     content_pattern1 = r': .*'
-    content_pattern2 = r'\w+'
+    content_pattern2 = r'[\w\s]+'
 
     # Getting the info that match my patterns defined above
     func_name = match(func_name_pattern,line).group(0)
@@ -35,10 +36,15 @@ with open('out.log','r') as f:
     line = f.readline()
     while line != "":
         parsed_line = parse_line(line)
-        if parsed_line['func_name'] in func_names_occurrences:
-            func_names_occurrences[ parsed_line['func_name'] ] += 1
+        func_name = parsed_line['func_name']
+        if func_name in func_names_occurrences:
+            del parsed_line['func_name']
+            func_obj = parsed_line
+            func_names_occurrences[ func_name ].append(func_obj)
         else:
-            func_names_occurrences[ parsed_line['func_name'] ] = 1
+            del parsed_line['func_name']
+            func_obj = parsed_line
+            func_names_occurrences[ func_name ] = [func_obj]
 
         line = f.readline()
-    print(func_names_occurrences)
+    print(json.dumps(func_names_occurrences, sort_keys=True,indent=4))
