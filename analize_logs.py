@@ -47,4 +47,6 @@ with open('out.log','r') as f:
             func_names_occurrences[ func_name ] = [func_obj]
 
         line = f.readline()
-    print(json.dumps(func_names_occurrences, sort_keys=True,indent=4))
+    func_names_occurrences = json.dumps(func_names_occurrences, sort_keys=True,indent=4)
+
+print(func_names_occurrences)
